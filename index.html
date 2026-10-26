@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Trading Analyzer Khmer — SMC Pro</title>
+
+<style>
+:root{
+  --bg:#07111f;--card:#101d30;--panel:#091626;
+  --border:#29405a;--text:#eaf2ff;--muted:#a9bad0;
+  --green:#20d69a;--red:#ff647c;--yellow:#ffd166;--blue:#64a9ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Arial,"Noto Sans Khmer",sans-serif;line-height:1.65
+}
+header{
+  padding:22px 15px;text-align:center;
+  background:linear-gradient(135deg,#102d4c,#111827);
+  border-bottom:1px solid var(--border)
+}
+header h1{font-size:24px;margin:0}
+header p{font-size:13px;color:var(--muted);margin:5px}
+.container{max-width:1150px;margin:auto;padding:14px}
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px;margin-bottom:14px
+}
+h2{font-size:19px;margin:0 0 12px}
+h3{font-size:15px;margin:0 0 8px}
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px
+}
+label{display:block;font-size:13px;color:var(--muted);margin:9px 0 4px}
+input,select,button{
+  width:100%;padding:11px;border-radius:8px;
+  border:1px solid var(--border);background:var(--panel);
+  color:var(--text);font-size:14px
+}
+input[type=checkbox]{width:auto}
+button{
+  background:var(--blue);color:#07111f;font-weight:bold;
+  cursor:pointer;border:0;margin-top:9px
+}
+button.secondary{background:#1a3049;color:var(--text);border:1px solid var(--border)}
+button.danger{background:#70283b;color:white}
+button:disabled{opacity:.5;cursor:wait}
+.metric-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));
+  gap:9px
+}
+.metric{
+  padding:12px;background:var(--panel);border:1px solid var(--border);
+  border-radius:9px;min-width:0
+}
+.metric-name{font-size:12px;color:var(--muted)}
+.metric-value{font-size:18px;font-weight:bold;overflow-wrap:anywhere}
+.small{font-size:12px;color:var(--muted)}
+.status{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:9px;padding:12px;margin:10px 0;overflow-wrap:anywhere
+}
+.badge{
+  display:inline-block;padding:3px 9px;border-radius:30px;
+  font-size:12px;font-weight:bold;margin:2px
+}
+.buy{background:#123e36;color:#7cf4c7}
+.sell{background:#4a202e;color:#ff9aaa}
+.neutral{background:#42391d;color:#ffe29a}
+.green{color:var(--green)}.red{color:var(--red)}
+.yellow{color:var(--yellow)}.blue{color:var(--blue)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:8px;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted)}
+.notice{
+  background:#292516;border-left:4px solid var(--yellow);
+  padding:12px;border-radius:5px;font-size:13px
+}
+hr{border:0;border-top:1px solid var(--border);margin:14px 0}
+footer{text-align:center;color:var(--muted);padding:20px;font-size:12px}
+</style>
+</head>
+
+<body>
+<header>
+  <h1>📊 AI Trading Analyzer Khmer — SMC Pro</h1>
+  <p>Gold · Bitcoin · Ethereum · Smart Money Concepts · Day Trading</p>
+  <span class="badge">1H Trend</span>
+  <span class="badge">15M SMC Setup</span>
+  <span class="badge">1M Entry Confirmation</span>
+</header>
+
+<div class="container">
+
+<section class="card">
+  <h2>⚙️ ការកំណត់</h2>
+
+  <div class="grid">
+    <div>
+      <label for="apiKey">Twelve Data API Key</label>
+      <input id="apiKey" type="password" placeholder="បញ្ចូល API Key">
+
+      <label><input id="showKey" type="checkbox"> បង្ហាញ API Key</label>
+
+      <button id="saveKey" class="secondary">រក្សាទុក API Key</button>
+      <p class="small">API Key រក្សាទុកក្នុង Browser របស់អ្នក។ កុំប្រើលើឧបករណ៍សាធារណៈ។</p>
+    </div>
+
+    <div>
+      <label for="symbol">ទីផ្សារ</label>
+      <select id="symbol">
+        <option value="XAU/USD">Gold — XAU/USD</option>
+        <option value="BTC/USD">Bitcoin — BTC/USD</option>
+        <option value="BTC/USDT">Bitcoin — BTC/USDT</option>
+        <option value="ETH/USD">Ethereum — ETH/USD</option>
+        <option value="ETH/USDT">Ethereum — ETH/USDT</option>
+      </select>
+
+      <label for="expiry">រយៈពេល Trade គ្រោងទុក</label>
+      <select id="expiry">
+        <option value="60">60 នាទី</option>
+        <option value="90" selected>90 នាទី</option>
+        <option value="120">120 នាទី</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="balance">ទុនគណនី (USD)</label>
+      <input id="balance" type="number" min="1" value="1000">
+
+      <label for="risk">Risk ក្នុងមួយ Trade</label>
+      <select id="risk">
+        <option value="0.5">0.5%</option>
+        <option value="1" selected>1%</option>
+        <option value="2">2%</option>
+      </select>
+
+      <label for="rr">Risk : Reward</label>
+      <select id="rr">
+        <option value="2">1 : 2</option>
+        <option value="3" selected>1 : 3</option>
+        <option value="4">1 : 4</option>
+      </select>
+    </div>
+  </div>
+
+  <button id="analyze">🔎 វិភាគ SMC ពេញលេញ</button>
+  <button id="testAPI" class="secondary">🔌 សាកល្បង API</button>
+  <button id="runBacktest" class="secondary">📈 Backtest 15M</button>
+  <button id="exportCSV" class="secondary">📥 Export Journal CSV</button>
+
+  <p class="small">
+    ប្រព័ន្ធទាញទិន្នន័យ 1min, 15min និង 1h។ វាមិនប្រើ 4h ទេ។
+    ចំនួន API requests អាចប៉ះពាល់ដល់កម្រិតប្រើប្រាស់ API របស់អ្នក។
+  </p>
+</section>
+
+<section class="card">
+  <h2>📡 ស្ថានភាពទីផ្សារ</h2>
+  <div id="status" class="status">សូមបញ្ចូល API Key រួចចុចវិភាគ។</div>
+
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="metric-name">Symbol</div>
+      <div id="symbolValue" class="metric-value">—</div>
+    </div>
+    <div class="metric">
+      <div class="metric-name">តម្លៃបច្ចុប្បន្ន</div>
+      <div id="priceValue" class="metric-value">—</div>
+    </div>
+    <div class="metric">
+      <div class="metric-name">1H Trend</div>
+      <div id="trendValue" class="metric-value">—</div>
+    </div>
+    <div class="metric">
+      <div class="metric-name">ម៉ោងកម្ពុជា</div>
+      <div id="timeValue" class="metric-value" style="font-size:13px">—</div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🎯 BUY / SELL Signal</h2>
+  <div id="signalBanner" class="status">មិនទាន់មាន Signal។</div>
+
+  <div class="metric-grid">
+    <div class="metric"><div class="metric-name">Entry</div><div id="entryValue" class="metric-value">—</div></div>
+    <div class="metric"><div class="metric-name">Stop Loss</div><div id="slValue" class="metric-value red">—</div></div>
+    <div class="metric"><div class="metric-name">Take Profit 1</div><div id="tp1Value" class="metric-value green">—</div></div>
+    <div class="metric"><div class="metric-name">Take Profit 2</div><div id="tp2Value" class="metric-value green">—</div></div>
+    <div class="metric"><div class="metric-name">Risk : Reward</div><div id="rrValue" class="metric-value">—</div></div>
+    <div class="metric"><div class="metric-name">Risk Amount</div><div id="riskMoneyValue" class="metric-value">—</div></div>
+    <div class="metric"><div class="metric-name">SMC Score</div><div id="scoreValue" class="metric-value">—</div></div>
+  </div>
+
+  <div id="entryExplanation" class="status">លទ្ធផលវិភាគនឹងបង្ហាញនៅទីនេះ។</div>
+</section>
+
+<section class="card">
+  <h2>🧭 Multi-Timeframe Analysis</h2>
+  <div class="grid">
+    <div class="metric">
+      <h3>1H — Trend</h3>
+      <div id="details1h">មិនទាន់មានទិន្នន័យ</div>
+    </div>
+    <div class="metric">
+      <h3>15M — SMC Setup</h3>
+      <div id="details15m">មិនទាន់មានទិន្នន័យ</div>
+    </div>
+    <div class="metric">
+      <h3>1M — Entry Confirmation</h3>
+      <div id="details1m">មិនទាន់មានទិន្នន័យ</div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🧠 Smart Money Concepts</h2>
+  <div id="smcReport">សូមធ្វើការវិភាគជាមុន។</div>
+</section>
+
+<section class="card">
+  <h2>📈 Backtesting</h2>
+  <div id="backtestReport">សូមធ្វើការវិភាគ ឬចុច Backtest។</div>
+  <p class="small">
+    Backtest ប្រើច្បាប់សាមញ្ញលើទិន្នន័យ 15M។ វាមិនមែនជា Backtest
+    ដែលចម្លងការបញ្ជាទិញពិតទាំងស្រុងទេ ហើយមិនទាន់គិត Spread,
+    Slippage និង Commission។
+  </p>
+</section>
+
+<section class="card">
+  <h2>📔 Trading Journal</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ម៉ោង</th><th>Symbol</th><th>Signal</th>
+          <th>Entry</th><th>SL</th><th>TP2</th><th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="journalBody">
+        <tr><td colspan="7">មិនទាន់មានកំណត់ត្រា</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <button id="clearJournal" class="danger">លុប Journal</button>
+</section>
+
+<section class="card">
+  <h2>📘 រូបមន្តដែលប្រព័ន្ធប្រើ</h2>
+  <ul>
+    <li><b>BOS:</b> Candle បិទលើ Swing High ឬក្រោម Swing Low ដែលបានកំណត់។</li>
+    <li><b>CHoCH:</b> Structure Break ដែលប្រឆាំងនឹងទិសដៅមុន។</li>
+    <li><b>Liquidity Sweep:</b> High/Low ឆ្លងកាត់តំបន់មុន ហើយ Close ត្រឡប់វិញ។</li>
+    <li><b>FVG:</b> ចន្លោះរវាង Candle 1 និង Candle 3 ក្នុងលំនាំ Candle បីដុំ។</li>
+    <li><b>Order Block:</b> Candle ផ្ទុយទិសចុងក្រោយមុន Structure Break តាមច្បាប់សាមញ្ញនេះ។</li>
+    <li><b>SMC Score:</b> ពិន្ទុបូកបញ្ចូល Structure, Liquidity, OB, FVG, Entry Confirmation និង R:R។</li>
+  </ul>
+</section>
+
+<div class="notice">
+  <b>⚠️ ការព្រមាន៖</b>
+  SMC Score មិនមែនជា Win Rate ឬភាគរយឈ្នះទេ។
+  ប្រព័ន្ធនេះជាឧបករណ៍ជួយវិភាគ មិនធានាចំណេញ និងមិនបញ្ជាទិញលក់ដោយស្វ័យប្រវត្តិ។
+  Entry/SL/TP ត្រូវពិនិត្យជាមួយ Broker របស់អ្នក មុនពេល Trade។
+</div>
+
+</div>
+
+<footer>AI Trading Analyzer Khmer — SMC Pro · Manual Trading Only</footer>
+
+<script>
+"use strict";
+
+/* =====================================================
+   SETTINGS AND STATE
+   Timeframes used: 1min, 15min, 1h
+   No 4h API request.
+   ===================================================== */
+
+const $ = id => document.getElementById(id);
+
+const state = {
+  data: null,
+  result: null,
+  journal: loadJournal()
+};
+
+function loadJournal(){
+  try{
+    const data=JSON.parse(localStorage.getItem("smcJournal")||"[]");
+    return Array.isArray(data)?data:[];
+  }catch{
+    return [];
+  }
+}
+
+function saveJournal(){
+  localStorage.setItem("smcJournal",JSON.stringify(state.journal));
+  renderJournal();
+}
+
+function status(message,error=false){
+  $("status").textContent=message;
+  $("status").style.borderColor=error?"var(--red)":"var(--border)";
+}
+
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function fmt(value,digits=2){
+  if(!Number.isFinite(Number(value))) return "—";
+  return Number(value).toLocaleString("en-US",{
+    minimumFractionDigits:digits,
+    maximumFractionDigits:digits
+  });
+}
+
+function digitsFor(symbol){
+  if(symbol.startsWith("ETH")) return 3;
+  if(symbol.startsWith("XAU")) return 2;
+  return 2;
+}
+
+function price(value,symbol=$("symbol").value){
+  return Number.isFinite(value)?fmt(value,digitsFor(symbol)):"—";
+}
+
+function cambodiaTime(date=new Date()){
+  return new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Phnom_Penh",
+    year:"numeric",month:"2-digit",day:"2-digit",
+    hour:"2-digit",minute:"2-digit",second:"2-digit",
+    hour12:false
+  }).format(date);
+}
+
+function average(values){
+  return values.length?values.reduce((a,b)=>a+b,0)/values.length:NaN;
+}
+
+function ema(values,period){
+  const out=Array(values.length).fill(null);
+  if(values.length<period)return out;
+
+  let value=average(values.slice(0,period));
+  out[period-1]=value;
+  const k=2/(period+1);
+
+  for(let i=period;i<values.length;i++){
+    value=values[i]*k+value*(1-k);
+    out[i]=value;
+  }
+  return out;
+}
+
+function rsi(values,period=14){
+  const out=Array(values.length).fill(null);
+  if(values.length<=period)return out;
+
+  let gains=0,losses=0;
+
+  for(let i=1;i<=period;i++){
+    const diff=values[i]-values[i-1];
+    if(diff>0)gains+=diff;
+    else losses-=diff;
+  }
+
+  let avgGain=gains/period;
+  let avgLoss=losses/period;
+
+  function calc(){
+    if(avgLoss===0)return avgGain===0?50:100;
+    return 100-100/(1+avgGain/avgLoss);
+  }
+
+  out[period]=calc();
+
+  for(let i=period+1;i<values.length;i++){
+    const diff=values[i]-values[i-1];
+    avgGain=(avgGain*(period-1)+Math.max(0,diff))/period;
+    avgLoss=(avgLoss*(period-1)+Math.max(0,-diff))/period;
+    out[i]=calc();
+  }
+  return out;
+}
+
+function atr(candles,period=14){
+  const tr=candles.map((c,i)=>{
+    if(i===0)return c.high-c.low;
+    const prev=candles[i-1].close;
+    return Math.max(
+      c.high-c.low,
+      Math.abs(c.high-prev),
+      Math.abs(c.low-prev)
+    );
+  });
+  return ema(tr,period);
+}
+
+function enrich(candles){
+  const close=candles.map(c=>c.close);
+  return {
+    candles,
+    close,
+    ema20:ema(close,20),
+    ema50:ema(close,50),
+    rsi:rsi(close,14),
+    atr:atr(candles,14)
+  };
+}
+
+function lastValid(array){
+  for(let i=array.length-1;i>=0;i--){
+    if(array[i]!==null&&Number.isFinite(array[i]))return array[i];
+  }
+  return null;
+}
+
+/* =====================================================
+   TWELVE DATA API
+   ===================================================== */
+
+function parseCandles(json){
+  if(json.status==="error"){
+    throw new Error(json.message||"Twelve Data API error");
+  }
+
+  if(!Array.isArray(json.values)){
+    throw new Error("API មិនបានផ្ញើ candles ត្រឡប់មក។ ពិនិត្យ Symbol និង API Key។");
+  }
+
+  const candles=json.values.map(v=>({
+    datetime:v.datetime,
+    open:Number(v.open),
+    high:Number(v.high),
+    low:Number(v.low),
+    close:Number(v.close),
+    volume:Number(v.volume)||0
+  })).filter(c=>
+    [c.open,c.high,c.low,c.close].every(Number.isFinite)
+  );
+
+  candles.sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
+
+  if(candles.length<60){
+    throw new Error("ទិន្នន័យមិនគ្រប់គ្រាន់។ ត្រូវការយ៉ាងហោចណាស់ 60 candles ក្នុង Timeframe នីមួយៗ។");
+  }
+  return candles;
+}
+
+async function fetchCandles(symbol,interval,outputsize=200){
+  const key=$("apiKey").value.trim();
+  if(!key)throw new Error("សូមបញ្ចូល Twelve Data API Key ជាមុន។");
+
+  const url=new URL("https://api.twelvedata.com/time_series");
+  url.searchParams.set("symbol",symbol);
+  url.searchParams.set("interval",interval);
+  url.searchParams.set("outputsize",String(outputsize));
+  url.searchParams.set("apikey",key);
+
+  const response=await fetch(url.toString());
+  if(!response.ok)throw new Error("HTTP "+response.status+" សម្រាប់ "+interval);
+
+  const json=await response.json();
+  return parseCandles(json);
+}
+
+async function testAPI(){
+  try{
+    status("កំពុងសាកល្បង Twelve Data API...");
+    const candles=await fetchCandles($("symbol").value,"1min",60);
+    status("API ជោគជ័យ។ ទទួលបាន "+candles.length+" candles សម្រាប់ 1M។");
+  }catch(err){
+    status("API Error: "+err.message,true);
+  }
+}
+
+/* =====================================================
+   MARKET STRUCTURE
+   Pivot is confirmed only after right-side candles exist.
+   ===================================================== */
+
+function findPivots(candles,left=2,right=2){
+  const highs=[],lows=[];
+
+  for(let i=left;i<candles.length-right;i++){
+    let isHigh=true,isLow=true;
+
+    for(let j=i-left;j<=i+right;j++){
+      if(j===i)continue;
+      if(candles[j].high>=candles[i].high)isHigh=false;
+      if(candles[j].low<=candles[i].low)isLow=false;
+    }
+
+    if(isHigh)highs.push({index:i,price:candles[i].high});
+    if(isLow)lows.push({index:i,price:candles[i].low});
+  }
+  return {highs,lows};
+}
+
+function structureAnalysis(candles){
+  const pivots=findPivots(candles,2,2);
+  const highs=pivots.highs;
+  const lows=pivots.lows;
+  const last=candles.at(-1);
+
+  const lastHigh=highs.at(-1);
+  const prevHigh=highs.at(-2);
+  const lastLow=lows.at(-1);
+  const prevLow=lows.at(-2);
+
+  let hh=false,lh=false,hl=false,ll=false;
+
+  if(lastHigh&&prevHigh){
+    hh=lastHigh.price>prevHigh.price;
+    lh=lastHigh.price<prevHigh.price;
+  }
+  if(lastLow&&prevLow){
+    hl=lastLow.price>prevLow.price;
+    ll=lastLow.price<prevLow.price;
+  }
+
+  let trend="NEUTRAL";
+  if(hh&&hl)trend="BUY";
+  else if(lh&&ll)trend="SELL";
+
+  const breakHigh=lastHigh&&last.close>lastHigh.price;
+  const breakLow=lastLow&&last.close<lastLow.price;
+
+  let bos=null,choch=null;
+
+  if(breakHigh){
+    bos="BULLISH";
+    if(trend==="SELL")choch="BULLISH";
+  }else if(breakLow){
+    bos="BEARISH";
+    if(trend==="BUY")choch="BEARISH";
+  }
+
+  return {
+    ...pivots,hh,lh,hl,ll,trend,bos,choch,
+    lastHigh,lastLow,prevHigh,prevLow
+  };
+}
+
+/* =====================================================
+   LIQUIDITY: equal highs/lows and sweeps
+   ===================================================== */
+
+function liquidityAnalysis(candles,structure){
+  const recent=candles.slice(-30,-1);
+  const last=candles.at(-1);
+
+  if(recent.length<10){
+    return {equalHigh:false,equalLow:false,sweepHigh:false,sweepLow:false};
+  }
+
+  const atrValue=lastValid(atr(candles,14))||0;
+  const tolerance=Math.max(atrValue*0.12,Math.abs(last.close)*0.0001);
+
+  const highs=structure.highs.slice(-5);
+  const lows=structure.lows.slice(-5);
+
+  let equalHigh=false,equalLow=false;
+
+  for(let i=0;i<highs.length;i++){
+    for(let j=i+1;j<highs.length;j++){
+      if(Math.abs(highs[i].price-highs[j].price)<=tolerance){
+        equalHigh=true;
+      }
+    }
+  }
+
+  for(let i=0;i<lows.length;i++){
+    for(let j=i+1;j<lows.length;j++){
+      if(Math.abs(lows[i].price-lows[j].price)<=tolerance){
+        equalLow=true;
+      }
+    }
+  }
+
+  const previousHigh=Math.max(...recent.map(c=>c.high));
+  const previousLow=Math.min(...recent.map(c=>c.low));
+
+  const sweepHigh=last.high>previousHigh&&last.close<previousHigh;
+  const sweepLow=last.low<previousLow&&last.close>previousLow;
+
+  return {
+    equalHigh,equalLow,sweepHigh,sweepLow,
+    bsl:previousHigh,ssl:previousLow,tolerance
+  };
+}
+
+/* =====================================================
+   FAIR VALUE GAP
+   ===================================================== */
+
+function findFVG(candles){
+  const gaps=[];
+  for(let i=2;i<candles.length;i++){
+    const first=candles[i-2];
+    const middle=candles[i-1];
+    const third=candles[i];
+
+    // Three-candle imbalance approximation.
+    if(first.high<third.low){
+      gaps.push({
+        type:"BULLISH",
+        low:first.high,
+        high:third.low,
+        index:i,
+        middleBody:Math.abs(middle.close-middle.open)
+      });
+    }
+
+    if(first.low>third.high){
+      gaps.push({
+        type:"BEARISH",
+        low:third.high,
+        high:first.low,
+        index:i,
+        middleBody:Math.abs(middle.close-middle.open)
+      });
+    }
+  }
+  return gaps;
+}
+
+function findOrderBlocks(candles,structure){
+  const blocks=[];
+  const n=candles.length;
+  const recentStart=Math.max(0,n-30);
+
+  // Search for an opposite candle before a confirmed structural break.
+  for(let i=recentStart+1;i<n;i++){
+    const candle=candles[i];
+    const prior=candles.slice(Math.max(0,i-12),i);
+
+    if(prior.length<5)continue;
+
+    const prevHigh=Math.max(...prior.map(c=>c.high));
+    const prevLow=Math.min(...prior.map(c=>c.low));
+
+    const bullishBreak=candle.close>prevHigh;
+    const bearishBreak=candle.close<prevLow;
+
+    if(bullishBreak){
+      for(let j=i-1;j>=Math.max(recentStart,i-6);j--){
+        const candidate=candles[j];
+        if(candidate.close<candidate.open){
+          blocks.push({
+            type:"BULLISH",
+            low:candidate.low,
+            high:candidate.high,
+            index:j,
+            breakIndex:i
+          });
+          break;
+        }
+      }
+    }
+
+    if(bearishBreak){
+      for(let j=i-1;j>=Math.max(recentStart,i-6);j--){
+        const candidate=candles[j];
+        if(candidate.close>candidate.open){
+          blocks.push({
+            type:"BEARISH",
+            low:candidate.low,
+            high:candidate.high,
+            index:j,
+            breakIndex:i
+          });
+          break;
+        }
+      }
+    }
+  }
+
+  // Keep recent blocks; this is a heuristic detector.
+  return blocks.slice(-10);
+}
+
+function zoneContains(zone,value){
+  return !!zone&&value>=zone.low&&value<=zone.high;
+}
+
+function nearestZone(zones,type,priceNow){
+  const eligible=zones.filter(z=>z.type===type);
+  if(!eligible.length)return null;
+
+  eligible.sort((a,b)=>{
+    const da=priceNow<a.low?a.low-priceNow:
+             priceNow>a.high?priceNow-a.high:0;
+    const db=priceNow<b.low?b.low-priceNow:
+             priceNow>b.high?priceNow-b.high:0;
+    return da-db;
+  });
+
+  return eligible[0];
+}
+
+/* =====================================================
+   TREND INDICATORS
+   ===================================================== */
+
+function indicatorTrend(data){
+  const i=data.close.length-1;
+  const p=data.close[i],e20=data.ema20[i],e50=data.ema50[i],r=data.rsi[i];
+
+  if(e20===null||e50===null||r===null){
+    return {direction:"NEUTRAL",score:0,reason:"ទិន្នន័យមិនគ្រប់គ្រាន់"};
+  }
+
+  let score=0;
+  if(p>e20)score++;
+  else if(p<e20)score--;
+
+  if(e20>e50)score++;
+  else if(e20<e50)score--;
+
+  if(r>=55)score++;
+  else if(r<=45)score--;
+
+  const direction=score>=2?"BUY":score<=-2?"SELL":"NEUTRAL";
+
+  return {
+    direction,score,p,e20,e50,r,
+    reason:`Price ${p>e20?"លើ":"ក្រោម"} EMA20 · EMA20 ${e20>e50?"លើ":"ក្រោម"} EMA50 · RSI ${fmt(r,1)}`
+  };
+}
+
+/* =====================================================
+   SMC SCORE ENGINE — 0 TO 100
+   Score is a heuristic, NOT win probability.
+   ===================================================== */
+
+function smcEngine(m1,m15,h1){
+  const d1=enrich(m1);
+  const d15=enrich(m15);
+  const d1h=enrich(h1);
+
+  const trend1h=indicatorTrend(d1h);
+  const trend15=indicatorTrend(d15);
+  const trend1=indicatorTrend(d1);
+
+  const structure15=structureAnalysis(m15);
+  const structure1=structureAnalysis(m1);
+
+  const liquidity15=liquidityAnalysis(m15,structure15);
+  const liquidity1=liquidityAnalysis(m1,structure1);
+
+  const fvgs15=findFVG(m15);
+  const obs15=findOrderBlocks(m15,structure15);
+
+  const current15=m15.at(-1).close;
+  const current1=m1.at(-1).close;
+
+  const fvgBull=nearestZone(fvgs15,"BULLISH",current15);
+  const fvgBear=nearestZone(fvgs15,"BEARISH",current15);
+  const obBull=nearestZone(obs15,"BULLISH",current15);
+  const obBear=nearestZone(obs15,"BEARISH",current15);
+
+  const inBullFVG=zoneContains(fvgBull,current15);
+  const inBearFVG=zoneContains(fvgBear,current15);
+  const inBullOB=zoneContains(obBull,current15);
+  const inBearOB=zoneContains(obBear,current15);
+
+  const price1h=h1.at(-1).close;
+  const atr15=lastValid(d15.atr);
+  const atr1=lastValid(d1.atr);
+
+  const scoreFor=(direction)=>{
+    let score=0;
+    const reasons=[];
+
+    // 1. 1H directional bias: 20 points.
+    if(trend1h.direction===direction){
+      score+=20;
+      reasons.push("+20: 1H Trend ស្របទិស");
+    }
+
+    // 2. 15M structure: 20 points.
+    if(direction==="BUY"&&structure15.bos==="BULLISH"){
+      score+=20;reasons.push("+20: 15M Bullish BOS");
+    }else if(direction==="SELL"&&structure15.bos==="BEARISH"){
+      score+=20;reasons.push("+20: 15M Bearish BOS");
+    }else if(direction==="BUY"&&structure15.choch==="BULLISH"){
+      score+=15;reasons.push("+15: 15M Bullish CHoCH");
+    }else if(direction==="SELL"&&structure15.choch==="BEARISH"){
+      score+=15;reasons.push("+15: 15M Bearish CHoCH");
+    }
+
+    // 3. Liquidity sweep: 15 points.
+    if(direction==="BUY"&&liquidity15.sweepLow){
+      score+=15;reasons.push("+15: Sell-Side Liquidity Sweep");
+    }else if(direction==="SELL"&&liquidity15.sweepHigh){
+      score+=15;reasons.push("+15: Buy-Side Liquidity Sweep");
+    }
+
+    // 4. Order Block: 15 points.
+    if(direction==="BUY"&&inBullOB){
+      score+=15;reasons.push("+15: តម្លៃនៅក្នុង Bullish OB");
+    }else if(direction==="SELL"&&inBearOB){
+      score+=15;reasons.push("+15: តម្លៃនៅក្នុង Bearish OB");
+    }else if(direction==="BUY"&&obBull&&current15>=obBull.low&&current15<=obBull.high+atr15*0.1){
+      score+=8;reasons.push("+8: តម្លៃនៅជិត Bullish OB");
+    }else if(direction==="SELL"&&obBear&&current15<=obBear.high&&current15>=obBear.low-atr15*0.1){
+      score+=8;reasons.push("+8: តម្លៃនៅជិត Bearish OB");
+    }
+
+    // 5. FVG: 10 points.
+    if(direction==="BUY"&&inBullFVG){
+      score+=10;reasons.push("+10: តម្លៃនៅក្នុង Bullish FVG");
+    }else if(direction==="SELL"&&inBearFVG){
+      score+=10;reasons.push("+10: តម្លៃនៅក្នុង Bearish FVG");
+    }
+
+    // 6. 1M confirmation: 15 points.
+    const candle=m1.at(-1);
+    const rsi1=d1.rsi.at(-1);
+
+    if(direction==="BUY"&&structure1.bos==="BULLISH"){
+      score+=15;reasons.push("+15: 1M Bullish BOS");
+    }else if(direction==="SELL"&&structure1.bos==="BEARISH"){
+      score+=15;reasons.push("+15: 1M Bearish BOS");
+    }else if(direction==="BUY"&&candle.close>candle.open&&rsi1!==null&&rsi1>=50&&rsi1<70){
+      score+=8;reasons.push("+8: 1M Bullish Candle និង RSI");
+    }else if(direction==="SELL"&&candle.close<candle.open&&rsi1!==null&&rsi1>30&&rsi1<=50){
+      score+=8;reasons.push("+8: 1M Bearish Candle និង RSI");
+    }
+
+    // 7. Reward/risk feasibility: 5 points.
+    const rr=Number($("rr").value);
+    const riskDistance=atr15?atr15*1.1:0;
+    const rewardDistance=riskDistance*rr;
+
+    if(riskDistance>0&&rewardDistance/riskDistance>=2){
+      score+=5;reasons.push("+5: Risk:Reward តាមការកំណត់");
+    }
+
+    return {score:Math.min(100,score),reasons};
+  };
+
+  const buy=scoreFor("BUY");
+  const sell=scoreFor("SELL");
+
+  let direction="NEUTRAL",chosen={score:0,reasons:[]};
+
+  // Higher timeframe direction is a filter, not just a score bonus.
+  if(trend1h.direction==="BUY"&&buy.score>sell.score){
+    direction="BUY";chosen=buy;
+  }else if(trend1h.direction==="SELL"&&sell.score>buy.score){
+    direction="SELL";chosen=sell;
+  }
+
+  const candle=m1.at(-1);
+  const rsi1=d1.rsi.at(-1);
+
+  // Require a 1M trigger to avoid using the score alone.
+  const triggerBuy=structure1.bos==="BULLISH"||
+    (candle.close>candle.open&&rsi1!==null&&rsi1>=50&&rsi1<70);
+
+  const triggerSell=structure1.bos==="BEARISH"||
+    (candle.close<candle.open&&rsi1!==null&&rsi1>30&&rsi1<=50);
+
+  if(direction==="BUY"&&!triggerBuy){
+    direction="NEUTRAL";
+  }
+  if(direction==="SELL"&&!triggerSell){
+    direction="NEUTRAL";
+  }
+
+  // Avoid treating a low score as a strong setup.
+  if(chosen.score<65){
+    direction="NEUTRAL";
+  }
+
+  const current=candle.close;
+  const atrStop=atr15||atr1;
+
+  let entry=null,sl=null,tp1=null,tp2=null,riskDistance=null;
+
+  if(direction!=="NEUTRAL"&&atrStop>0){
+    entry=current;
+    const relevantSweep=direction==="BUY"?liquidity15.sweepLow:liquidity15.sweepHigh;
+
+    if(direction==="BUY"){
+      const structuralSL=liquidity15.sweepLow
+        ?Math.min(...m15.slice(-5).map(c=>c.low))
+        :Math.min(...m15.slice(-5).map(c=>c.low));
+
+      sl=Math.min(entry-atrStop*1.1,structuralSL-atrStop*0.05);
+      riskDistance=entry-sl;
+      tp1=entry+riskDistance*2;
+      tp2=entry+riskDistance*Number($("rr").value);
+    }else{
+      const structuralSL=liquidity15.sweepHigh
+        ?Math.max(...m15.slice(-5).map(c=>c.high))
+        :Math.max(...m15.slice(-5).map(c=>c.high));
+
+      sl=Math.max(entry+atrStop*1.1,structuralSL+atrStop*0.05);
+      riskDistance=sl-entry;
+      tp1=entry-riskDistance*2;
+      tp2=entry-riskDistance*Number($("rr").value);
+    }
+  }
+
+  return {
+    direction,score:chosen.score,reasons:chosen.reasons,
+    trend1h,trend15,trend1,
+    structure15,structure1,
+    liquidity15,liquidity1,
+    fvgs15,obs15,fvgBull,fvgBear,obBull,obBear,
+    inBullFVG,inBearFVG,inBullOB,inBearOB,
+    current,entry,sl,tp1,tp2,riskDistance,
+    atr15,atr1,price1h
+  };
+}
+
+/* =====================================================
+   RENDER RESULTS
+   ===================================================== */
+
+function badge(direction){
+  const cls=direction==="BUY"?"buy":direction==="SELL"?"sell":"neutral";
+  return `<span class="badge ${cls}">${escapeHTML(direction)}</span>`;
+}
+
+function renderTimeframe(id,data,symbol){
+  $(id).innerHTML=`
+    ${badge(data.direction)}
+    <br>Price: ${price(data.p,symbol)}
+    <br>EMA20: ${price(data.e20,symbol)}
+    <br>EMA50: ${price(data.e50,symbol)}
+    <br>RSI14: ${fmt(data.r,1)}
+    <br><span class="small">${escapeHTML(data.reason)}</span>`;
+}
+
+function renderSMC(result,symbol){
+  const s=result.structure15;
+  const l=result.liquidity15;
+
+  const fvgLines=[];
+  if(result.fvgBull)fvgLines.push(
+    `Bullish FVG: ${price(result.fvgBull.low,symbol)} – ${price(result.fvgBull.high,symbol)}`
+  );
+  if(result.fvgBear)fvgLines.push(
+    `Bearish FVG: ${price(result.fvgBear.low,symbol)} – ${price(result.fvgBear.high,symbol)}`
+  );
+
+  const obLines=[];
+  if(result.obBull)obLines.push(
+    `Bullish OB: ${price(result.obBull.low,symbol)} – ${price(result.obBull.high,symbol)}`
+  );
+  if(result.obBear)obLines.push(
+    `Bearish OB: ${price(result.obBear.low,symbol)} – ${price(result.obBear.high,symbol)}`
+  );
+
+  const lines=[
+    `Market Structure: ${s.trend}`,
+    `HH: ${s.hh?"មាន":"មិនមាន"} · HL: ${s.hl?"មាន":"មិនមាន"} · LH: ${s.lh?"មាន":"មិនមាន"} · LL: ${s.ll?"មាន":"មិនមាន"}`,
+    `BOS: ${s.bos||"មិនទាន់មាន"}`,
+    `CHoCH: ${s.choch||"មិនទាន់មាន"}`,
+    `Equal High: ${l.equalHigh?"បានរកឃើញ":"មិនរកឃើញ"}`,
+    `Equal Low: ${l.equalLow?"បានរកឃើញ":"មិនរកឃើញ"}`,
+    `Buy-Side Liquidity ប្រហែល: ${price(l.bsl,symbol)}`,
+    `Sell-Side Liquidity ប្រហែល: ${price(l.ssl,symbol)}`,
+    `Sweep High: ${l.sweepHigh?"បានរកឃើញ":"មិនរកឃើញ"}`,
+    `Sweep Low: ${l.sweepLow?"បានរកឃើញ":"មិនរកឃើញ"}`,
+    ...fvgLines,
+    ...obLines
+  ];
+
+  $("smcReport").innerHTML=lines.map(x=>`• ${escapeHTML(x)}`).join("<br>");
+}
+
+function renderResult(result,allData){
+  const symbol=$("symbol").value;
+  state.result=result;
+  state.data=allData;
+
+  $("symbolValue").textContent=symbol;
+  $("priceValue").textContent=price(result.current,symbol);
+  $("trendValue").textContent=result.trend1h.direction;
+  $("timeValue").textContent=cambodiaTime();
+
+  renderTimeframe("details1h",result.trend1h,symbol);
+  renderTimeframe("details15m",result.trend15,symbol);
+  renderTimeframe("details1m",result.trend1,symbol);
+  renderSMC(result,symbol);
+
+  const direction=result.direction;
+
+  if(direction==="NEUTRAL"){
+    $("signalBanner").innerHTML=`
+      ${badge("NEUTRAL")}
+      <br>មិនមាន BUY/SELL Setup គ្រប់លក្ខខណ្ឌ។
+      <br>1H Trend: ${result.trend1h.direction}
+      <br>15M Setup: ${result.trend15.direction}
+      <br>SMC Score ខ្ពស់មិនមានន័យថាអាចចូលភ្លាមៗទេ។`;
+
+    ["entryValue","slValue","tp1Value","tp2Value","rrValue","riskMoneyValue"].forEach(id=>{
+      $(id).textContent="—";
+    });
+
+    $("scoreValue").textContent=result.score+"/100";
+    $("entryExplanation").innerHTML=
+      "ប្រព័ន្ធមិនបង្កើត Entry Plan ព្រោះ Trend/Trigger/Score មិនទាន់បំពេញតាមច្បាប់។<br>"+
+      result.reasons.map(x=>"• "+escapeHTML(x)).join("<br>");
+
+    addJournal(result);
+    return;
+  }
+
+  const balance=Number($("balance").value);
+  const riskPct=Number($("risk").value);
+  const riskMoney=balance*riskPct/100;
+
+  $("signalBanner").innerHTML=`
+    ${badge(direction)}
+    <b>${escapeHTML(symbol)}</b>
+    <br>SMC Confluence Score: ${result.score}/100
+    <br><span class="small">ពិន្ទុនេះមិនមែនជា Win Probability ទេ។</span>`;
+
+  $("entryValue").textContent=price(result.entry,symbol);
+  $("slValue").textContent=price(result.sl,symbol);
+  $("tp1Value").textContent=price(result.tp1,symbol);
+  $("tp2Value").textContent=price(result.tp2,symbol);
+  $("rrValue").textContent="1 : "+$("rr").value;
+  $("riskMoneyValue").textContent="$"+fmt(riskMoney,2);
+  $("scoreValue").textContent=result.score+"/100";
+
+  $("entryExplanation").innerHTML=`
+    <b>ហេតុផលសំខាន់ៗ:</b><br>
+    ${result.reasons.map(x=>"• "+escapeHTML(x)).join("<br>")}
+    <hr>
+    <b>Entry:</b> តម្លៃនៅពេលវិភាគ មិនមែន Limit Order ដែលបានដាក់នៅ Broker ទេ។
+    <br><b>Expiry គ្រោងទុក:</b> ${$("expiry").value} នាទី
+    <br><b>Risk Amount:</b> $${fmt(riskMoney,2)}
+    <br><b>ចំណាំ:</b> Risk Amount គឺថវិកាប្រថុយគោលដៅ មិនមែនជាការគណនាទំហំ Lot ពិតប្រាកដទេ។
+    ត្រូវពិនិត្យ Contract Size និង Point Value របស់ Broker។
+  `;
+
+  addJournal(result);
+}
+
+/* =====================================================
+   JOURNAL
+   ===================================================== */
+
+function addJournal(result){
+  const key=$("symbol").value+"|"+Date.now();
+
+  state.journal.unshift({
+    key,
+    time:cambodiaTime(),
+    symbol:$("symbol").value,
+    direction:result.direction,
+    entry:result.entry,
+    sl:result.sl,
+    tp2:result.tp2,
+    score:result.score
+  });
+
+  state.journal=state.journal.slice(0,100);
+  saveJournal();
+}
+
+function renderJournal(){
+  if(!state.journal.length){
+    $("journalBody").innerHTML='<tr><td colspan="7">មិនទាន់មានកំណត់ត្រា</td></tr>';
+    return;
+  }
+
+  $("journalBody").innerHTML=state.journal.map(j=>`
+    <tr>
+      <td>${escapeHTML(j.time)}</td>
+      <td>${escapeHTML(j.symbol)}</td>
+      <td>${escapeHTML(j.direction)}</td>
+      <td>${price(j.entry,j.symbol)}</td>
+      <td>${price(j.sl,j.symbol)}</td>
+      <td>${price(j.tp2,j.symbol)}</td>
+      <td>${escapeHTML(j.score)}/100</td>
+    </tr>
+  `).join("");
+}
+
+/* =====================================================
+   BACKTEST
+   This is an EMA/RSI directional baseline, NOT a full SMC
+   historical execution simulator. Avoid using it as proof
+   of profitability.
+   ===================================================== */
+
+function backtest15m(candles){
+  const d=enrich(candles);
+  const close=d.close;
+  const trades=[];
+  const horizon=Math.max(1,Math.round(Number($("expiry").value)/15));
+  const rr=Number($("rr").value);
+
+  for(let i=55;i<close.length-horizon;i++){
+    const e20=d.ema20[i],e50=d.ema50[i],r=d.rsi[i];
+    if(e20===null||e50===null||r===null)continue;
+
+    let direction=null;
+    if(close[i]>e20&&e20>e50&&r>=55)direction="BUY";
+    else if(close[i]<e20&&e20<e50&&r<=45)direction="SELL";
+    if(!direction)continue;
+
+    // Enter at the next candle's open to reduce same-candle lookahead.
+    const entry=candles[i+1]?.open;
+    if(!Number.isFinite(entry))continue;
+
+    const atrValue=d.atr[i];
+    if(!Number.isFinite(atrValue)||atrValue<=0)continue;
+
+    const slDistance=atrValue*1.1;
+    const sl=direction==="BUY"?entry-slDistance:entry+slDistance;
+    const tp=direction==="BUY"?entry+slDistance*rr:entry-slDistance*rr;
+
+    let outcome="FLAT";
+    let exit=close[Math.min(i+horizon,close.length-1)];
+
+    for(let j=i+1;j<=Math.min(i+horizon, candles.length-1);j++){
+      const c=candles[j];
+
+      // Conservative assumption: if SL and TP touch in the same candle,
+      // count it as a loss because intrabar order is unknown.
+      const slHit=direction==="BUY"?c.low<=sl:c.high>=sl;
+      const tpHit=direction==="BUY"?c.high>=tp:c.low<=tp;
+
+      if(slHit&&tpHit){
+        outcome="LOSS";
+        exit=sl;
+        break;
+      }
+      if(slHit){
+        outcome="LOSS";
+        exit=sl;
+        break;
+      }
+      if(tpHit){
+        outcome="WIN";
+        exit=tp;
+        break;
+      }
+    }
+
+    const pnl=direction==="BUY"?exit-entry:entry-exit;
+
+    trades.push({direction,entry,sl,tp,exit,pnl,outcome});
+  }
+
+  const wins=trades.filter(t=>t.outcome==="WIN").length;
+  const losses=trades.filter(t=>t.outcome==="LOSS").length;
+  const unresolved=trades.length-wins-losses;
+  const winRate=trades.length?wins/trades.length*100:0;
+  const totalR=trades.reduce((sum,t)=>{
+    const risk=Math.abs(t.entry-t.sl);
+    return sum+(risk? t.pnl/risk:0);
+  },0);
+
+  return {trades,wins,losses,unresolved,winRate,totalR,horizon};
+}
+
+function renderBacktest(candles){
+  const bt=backtest15m(candles);
+
+  if(!bt.trades.length){
+    $("backtestReport").textContent="មិនមាន Trade គ្រប់គ្រាន់សម្រាប់ Backtest តាមលក្ខខណ្ឌនេះទេ។";
+    return;
+  }
+
+  $("backtestReport").innerHTML=`
+    <div class="metric-grid">
+      <div class="metric"><div class="metric-name">ចំនួន Trades</div><div class="metric-value">${bt.trades.length}</div></div>
+      <div class="metric"><div class="metric-name">TP ឈ្នះ</div><div class="metric-value green">${bt.wins}</div></div>
+      <div class="metric"><div class="metric-name">SL ចាញ់</div><div class="metric-value red">${bt.losses}</div></div>
+      <div class="metric"><div class="metric-name">Win Rate</div><div class="metric-value">${fmt(bt.winRate,1)}%</div></div>
+      <div class="metric"><div class="metric-name">Net R</div><div class="metric-value ${bt.totalR>=0?"green":"red"}">${fmt(bt.totalR,2)}R</div></div>
+    </div>
+    <p class="small">
+      ការធ្វើតេស្តប្រើ EMA/RSI ជា Baseline មិនមែន SMC Backtest ពេញលេញទេ។
+      វាប្រើតម្លៃ OHLC ដែលមាន និងច្បាប់ SL/TP សាមញ្ញ។
+      មិនរាប់បញ្ចូលថ្លៃជួញដូរ ឬការរអិលតម្លៃ។
+      Win Rate មិនធានាលទ្ធផលអនាគត។
+    </p>
+  `;
+}
+
+/* =====================================================
+   MAIN ANALYSIS
+   ===================================================== */
+
+async function analyze(){
+  const btn=$("analyze");
+  btn.disabled=true;
+
+  try{
+    const symbol=$("symbol").value;
+    status("កំពុងទាញទិន្នន័យ "+symbol+" — 1M, 15M, 1H...");
+
+    // These are the ONLY requested intervals.
+    const [m1,m15,h1]=await Promise.all([
+      fetchCandles(symbol,"1min",200),
+      fetchCandles(symbol,"15min",200),
+      fetchCandles(symbol,"1h",200)
+    ]);
+
+    status(`ទិន្នន័យរួចរាល់៖ 1M=${m1.length}, 15M=${m15.length}, 1H=${h1.length}`);
+
+    const result=smcEngine(m1,m15,h1);
+
+    renderResult(result,{m1,m15,h1});
+    renderBacktest(m15);
+
+    status("វិភាគបានបញ្ចប់ · "+symbol+" · "+cambodiaTime());
+  }catch(err){
+    console.error(err);
+    status("មានបញ្ហា៖ "+err.message,true);
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+/* =====================================================
+   EXPORT AND SETTINGS
+   ===================================================== */
+
+function exportCSV(){
+  if(!state.journal.length){
+    alert("មិនទាន់មាន Journal ទេ។");
+    return;
+  }
+
+  const headers=["time","symbol","direction","entry","sl","tp2","score"];
+  const rows=state.journal.map(row=>
+    headers.map(key=>{
+      const value=String(row[key]??"");
+      return '"'+value.replace(/"/g,'""')+'"';
+    }).join(",")
+  );
+
+  const csv="\uFEFF"+headers.join(",")+"\n"+rows.join("\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download="SMC_Trading_Journal.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+$("apiKey").value=localStorage.getItem("twelveDataApiKey")||"";
+
+$("showKey").addEventListener("change",()=>{
+  $("apiKey").type=$("showKey").checked?"text":"password";
+});
+
+$("saveKey").addEventListener("click",()=>{
+  const key=$("apiKey").value.trim();
+  if(!key){
+    alert("សូមបញ្ចូល API Key ជាមុន។");
+    return;
+  }
+  localStorage.setItem("twelveDataApiKey",key);
+  alert("បានរក្សាទុក API Key ក្នុង Browser នេះ។");
+});
+
+$("testAPI").addEventListener("click",testAPI);
+$("analyze").addEventListener("click",analyze);
+
+$("runBacktest").addEventListener("click",()=>{
+  if(!state.data){
+    alert("សូមវិភាគទីផ្សារជាមុន ដើម្បីទាញទិន្នន័យ 15M។");
+    return;
+  }
+  renderBacktest(state.data.m15);
+});
+
+$("exportCSV").addEventListener("click",exportCSV);
+
+$("clearJournal").addEventListener("click",()=>{
+  if(confirm("តើអ្នកចង់លុប Journal ទាំងអស់មែនទេ?")){
+    state.journal=[];
+    saveJournal();
+  }
+});
+
+renderJournal();
+</script>
+</body>
+</html>
